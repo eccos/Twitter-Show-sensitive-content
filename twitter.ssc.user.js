@@ -22,9 +22,9 @@
         });
     }
     let ticking = false;
-    document.addEventListener('scroll', function (e) {
+    document.addEventListener('scroll', (e) => {
         if (ticking) return;
-        window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(() => {
             autoClickShow();
             ticking = false;
         });
