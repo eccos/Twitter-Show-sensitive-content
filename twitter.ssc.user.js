@@ -11,21 +11,20 @@
 // @updateURL    https://github.com/eccos/Twitter-Show-sensitive-content/raw/main/twitter.ssc.user.js
 // ==/UserScript==
 
-(function() {
+(function () {
     'use strict';
 
     function autoClickShow() {
         let btns = document.querySelectorAll("div[role='button']");
-        for (let i in btns) {
-            let btn = btns[i];
-            if (btn.textContent != "Show") continue;
+        btns.forEach((btn) => {
+            if (btn.textContent != "Show") return;
             btn.click();
-        }
+        });
     }
     let ticking = false;
-    document.addEventListener('scroll', function(e) {
+    document.addEventListener('scroll', function (e) {
         if (ticking) return;
-        window.requestAnimationFrame(function() {
+        window.requestAnimationFrame(function () {
             autoClickShow();
             ticking = false;
         });
