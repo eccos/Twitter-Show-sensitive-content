@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Show sensitive content
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      0.5
 // @description  Auto clicks "Show" button for "Content warning: Sensitive content" overlay
 // @author       eccos
 // @match        https://twitter.com/*
@@ -16,7 +16,10 @@
   'use strict';
 
   function autoClickShow() {
-    const btns = document.querySelectorAll("div[role='button']");
+    const oldBtns = document.querySelectorAll("div[role='button']"); // twitter method of defining the button
+    const newBtns = document.querySelectorAll("button[role='button']"); // x method of defining the button
+    const btns = [...oldBtns, ...newBtns];
+    
     btns.forEach((btn) => {
       if (btn.textContent != 'Show') return;
       btn.click();
