@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Show sensitive content
 // @namespace    http://tampermonkey.net/
-// @version      0.5
-// @description  Auto clicks "Show" button for "Content warning: Sensitive content" overlay
+// @version      0.6
+// @description  Auto clicks "Show" & "View" buttons for "Sensitive content" overlays
 // @author       eccos
 // @match        https://twitter.com/*
 // @match        https://x.com/*
@@ -19,9 +19,11 @@
     const oldBtns = document.querySelectorAll("div[role='button']"); // twitter method of defining the button
     const newBtns = document.querySelectorAll("button[role='button']"); // x method of defining the button
     const btns = [...oldBtns, ...newBtns];
-    
+    const txtMatchList = ['show', 'view'];
+
     btns.forEach((btn) => {
-      if (btn.textContent != 'Show') return;
+      const txt = btn.textContent.toLowerCase();
+      if (!txtMatchList.includes(txt)) return;
       btn.click();
     });
   }
