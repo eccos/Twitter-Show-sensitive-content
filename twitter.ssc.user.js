@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Show sensitive content
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      0.8
 // @description  Auto clicks "Show" & "View" buttons for "Sensitive content" overlays
 // @author       eccos
 // @match        https://twitter.com/*
@@ -10,13 +10,25 @@
 // @grant        none
 // @downloadURL  https://github.com/eccos/Twitter-Show-sensitive-content/raw/main/twitter.ssc.user.js
 // @updateURL    https://github.com/eccos/Twitter-Show-sensitive-content/raw/main/twitter.ssc.user.js
-// @require      file://C:/Users/Eccos/Dev/repos/Twitter-Show-sensitive-content/twitter.ssc.user.js
 // ==/UserScript==
 
 (function () {
   'use strict';
 
+  // on scroll, auto click sensitivity buttons and hide posts from blocked accounts
+  // on scroll for main html document
   document.addEventListener('scroll', handleScroll);
+
+  // on scroll for the conversation side panel that appears when an image is clicked instead of the post
+  // observer is used because side panel is dynamically created
+  const observer = new MutationObserver(() => {
+    attachScrollListener();
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
 
   function handleScroll(e) {
     window.requestAnimationFrame(() => {
@@ -49,5 +61,28 @@
         }
       });
     });
+  }
+
+  function attachScrollListener() {
+    const sidePanel = document.querySelector(
+      '[aria-label="Timeline: Conversation"]'
+    );
+    const scrollable = sidePanel ? getScrollableParent(sidePanel) : null;
+    if (scrollable) {
+      scrollable.addEventListener('scroll', handleScroll, { passive: true });
+    }
+  }
+
+  function getScrollableParent(element) {
+    while (element && element !== document.body) {
+      const style = getComputedStyle(element);
+      const overflowY = style.overflowY;
+      const isScrollable =
+        (overflowY === 'auto' || overflowY === 'scroll') &&
+        element.scrollHeight > element.clientHeight;
+      if (isScrollable) return element;
+      element = element.parentElement;
+    }
+    return null;
   }
 })();
